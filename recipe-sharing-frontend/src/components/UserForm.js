@@ -3,15 +3,15 @@ import { TextField, Button, Typography, Container, Box } from "@mui/material";
 import { createUser } from "../api";
 
 const UserForm = ({ token }) => {
-  const [name, setName] = useState("");
+  const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newUser = { name, email, password };
+    const newUser = { username, email, password };
     await createUser(newUser, token);
-    setName("");
+    setUserName("");
     setEmail("");
     setPassword("");
   };
@@ -26,11 +26,11 @@ const UserForm = ({ token }) => {
       <form onSubmit={handleSubmit}>
         <Box sx={{ mb: 2 }}>
           <TextField
-            label="Name"
+            label="User Name"
             variant="outlined"
             fullWidth
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={username}
+            onChange={(e) => setUserName(e.target.value)}
           />
         </Box>
         <Box sx={{ mb: 2 }}>
