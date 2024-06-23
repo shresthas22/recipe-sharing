@@ -1,0 +1,98 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  recipes   Recipe[]
+  comments  Comment[]
+  ratings   Rating[]
+  favorites Favorite[]
+}
+
+model Recipe {
+  id           Int              @id @default(autoincrement())
+  userId       Int
+  title        String
+  description  String?
+  instructions String
+  imageUrl     String?
+  createdAt    DateTime         @default(now())
+  user         User             @relation(fields: [userId], references: [id])
+  ingredients  RecipeIngredient[]
+  categories   RecipeCategory[]
+  comments     Comment[]
+  ratings      Rating[]
+  favorites    Favorite[]
+}
+
+model Ingredient {
+  id        Int              @id @default(autoincrement())
+  name      String           @unique
+  recipes   RecipeIngredient[]
+}
+
+model RecipeIngredient {
+  recipeId     Int
+  ingredientId Int
+  quantity     String?
+  recipe       Recipe     @relation(fields: [recipeId], references: [id])
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  @@id([recipeId, ingredientId])
+}
+
+model Category {
+  id        Int            @id @default(autoincrement())
+  name      String         @unique
+  recipes   RecipeCategory[]
+}
+
+model RecipeCategory {
+  recipeId   Int
+  categoryId Int
+  recipe     Recipe   @relation(fields: [recipeId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
+  @@id([recipeId, categoryId])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  recipeId  Int
+  userId    Int
+  comment   String
+  createdAt DateTime @default(now())
+  recipe    Recipe   @relation(fields: [recipeId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Rating {
+  id        Int      @id @default(autoincrement())
+  recipeId  Int
+  userId    Int
+  rating    Int      @default(1)
+  createdAt DateTime @default(now())
+  recipe    Recipe   @relation(fields: [recipeId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Favorite {
+  userId    Int
+  recipeId  Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  recipe    Recipe   @relation(fields: [recipeId], references: [id])
+  @@id([userId, recipeId])
+}
